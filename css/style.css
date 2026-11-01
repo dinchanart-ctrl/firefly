@@ -1,0 +1,298 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #091018;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+    background: radial-gradient(circle at center, #132235 0%, #091018 60%, #050b12 100%);
+}
+
+canvas {
+    display: block;
+}
+
+#camera-preview {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+#camera-preview[hidden] {
+    display: none;
+}
+
+.pose-camera {
+    width: min(240px, 34vw);
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transform: scaleX(-1);
+    order: 1;
+    border: 2px solid rgba(200, 240, 255, 0.7);
+    border-radius: 12px;
+    background: rgba(12, 20, 30, 0.8);
+    box-shadow: 0 0 24px rgba(120, 230, 180, 0.18);
+}
+
+#camera-preview-toggle {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+}
+
+#camera-preview-toggle svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: #fff;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.6;
+}
+
+#camera-preview-toggle:focus-visible,
+#pose-start:focus-visible,
+#reset-button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+#camera-preview.is-minimized .pose-camera {
+    display: none;
+}
+
+#reset-button {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 3;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    font: 32px/1 Arial, sans-serif;
+    cursor: pointer;
+}
+
+.player-jar {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 90px;
+    padding: 9px 5px;
+    border: 2px solid rgba(200, 240, 255, 0.7);
+    border-radius: 9px 9px 12px 12px;
+    background: rgba(12, 20, 30, 0.4);
+    box-shadow: inset 0 0 12px rgba(144, 214, 255, 0.18), 0 0 16px rgba(120, 230, 180, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.jar-resize {
+    position: absolute;
+    top: -14px;
+    z-index: 4;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    background: rgba(9, 16, 24, 0.9);
+    color: #fff;
+    font: 24px/28px Arial, sans-serif;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.jar-resize-increase {
+    left: -14px;
+}
+
+.jar-resize-decrease {
+    right: -14px;
+}
+
+.jar-resize:hover {
+    background: rgba(45, 65, 82, 0.95);
+}
+
+.jar-resize:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.player-jar:active {
+    cursor: grabbing;
+}
+
+.player-jar:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+}
+
+.player-jar-shared {
+    left: 50%;
+    top: auto;
+    bottom: 26px;
+    transform: translateX(-50%);
+}
+
+.player-jar::before {
+    content: "";
+    position: absolute;
+    inset: 8px 7px 9px;
+    border-radius: 6px 6px 9px 9px;
+    background: rgba(175, 220, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.jar-count {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.jar-count {
+    margin-top: 16px;
+    font-size: 24px;
+    font-weight: bold;
+    color: rgba(228, 250, 255, 0.95);
+    text-shadow: 0 0 7px rgba(150, 255, 180, 0.9);
+}
+
+#pose-controls {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    z-index: 3;
+    max-width: min(360px, calc(100vw - 40px));
+    color: rgba(228, 250, 255, 0.9);
+    font: 14px/1.4 Arial, sans-serif;
+}
+
+#pose-start {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 11px;
+    border: 1px solid rgba(200, 240, 255, 0.8);
+    border-radius: 50%;
+    background: rgba(12, 20, 30, 0.88);
+    color: inherit;
+    cursor: pointer;
+    box-shadow: 0 0 18px rgba(120, 230, 180, 0.14);
+}
+
+#pose-start svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: #fff;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+}
+
+#pose-start:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+#pose-start.is-ready {
+    border-color: rgba(255, 224, 90, 0.85);
+    background: rgba(12, 20, 30, 0.88);
+    color: #f4cd42;
+    box-shadow: 0 0 18px rgba(255, 220, 70, 0.3);
+}
+
+#pose-start.is-ready svg {
+    stroke: currentColor;
+}
+
+#pose-status {
+    margin-top: 10px;
+    text-shadow: 0 1px 4px #000;
+}
+
+#flash-indicator {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(200, 240, 255, 0.55);
+    border-radius: 50%;
+    background: rgba(12, 20, 30, 0.88);
+    color: rgba(200, 240, 255, 0.6);
+    box-shadow: 0 0 18px rgba(120, 230, 180, 0.08);
+    transition: color 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+#flash-indicator svg {
+    width: 25px;
+    height: 25px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.6;
+}
+
+#flash-indicator.is-active {
+    border-color: rgba(255, 224, 90, 0.85);
+    color: #f4cd42;
+    box-shadow: 0 0 18px rgba(255, 220, 70, 0.3);
+}
+
+#flash-indicator.is-detected {
+    background: #f4cd42;
+    color: #17202a;
+    box-shadow: 0 0 24px rgba(255, 220, 70, 0.7);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
