@@ -1,5 +1,5 @@
 const totalFireflies = 100;
-const maxVisible = 5;
+const maxVisible = 10;
 const inactivityDelayMs = 60 * 1000;
 const additionalFirefliesPerInterval = 5;
 const fadeDelayMs = 10 * 1000;
@@ -271,12 +271,12 @@ async function trackPoseFrame() {
 function createFirefly() {
   const radius = random(4, 12);
   return {
-    x: random(radius, width - radius),
-    y: random(height * 0.2, height * 0.58),
+    x: random(width * 0.2, width * 0.8),
+    y: random(height * 0.25, height * 0.55),
     radius,
     phase: random(TWO_PI),
-    driftX: random(-0.3, 0.3),
-    driftY: random(-0.25, 0.25),
+    driftX: random(-0.28, 0.28),
+    driftY: random(-0.22, 0.22),
     caught: false,
     caughtBy: null,
     caughtOrder: 0,
@@ -302,14 +302,8 @@ function placeJar(element, jar, centerX, centerY) {
 }
 
 function bindDraggableJar(element, jar) {
-  for (const resizeButton of element.querySelectorAll('.jar-resize')) {
-    const direction = resizeButton.classList.contains('jar-resize-increase') ? 1 : -1;
-    resizeButton.addEventListener('pointerdown', event => event.stopPropagation());
-    resizeButton.addEventListener('click', () => resizeJar(element, jar, direction));
-  }
-
   element.addEventListener('pointerdown', event => {
-    if (event.button !== 0 || event.target.closest('.jar-resize')) {
+    if (event.button !== 0) {
       return;
     }
 
@@ -362,22 +356,6 @@ function bindDraggableJar(element, jar) {
       bounds.top + bounds.height / 2 + direction[1]
     );
   });
-}
-
-function resizeJar(element, jar, direction) {
-  const bounds = element.getBoundingClientRect();
-  const maxWidth = min(240, width - 24);
-  const maxHeight = min(360, height - 24);
-  const newWidth = constrain(bounds.width + direction * 10, 60, maxWidth);
-  const newHeight = constrain(bounds.height + direction * 15, 90, maxHeight);
-
-  if (newWidth === bounds.width && newHeight === bounds.height) {
-    return;
-  }
-
-  element.style.width = `${newWidth}px`;
-  element.style.height = `${newHeight}px`;
-  placeJar(element, jar, bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
 }
 
 function updateJarPosition() {
@@ -467,10 +445,10 @@ function triggerRandomBurst() {
     const f = fireflies[i];
     if (!f.caught && !f.visible) {
       f.visible = true;
-      f.x = random(f.radius, width - f.radius);
-      f.y = random(height * 0.2, height * 0.58);
-      f.driftX = random(-0.3, 0.3);
-      f.driftY = random(-0.25, 0.25);
+      f.x = random(width * 0.22, width * 0.78);
+      f.y = random(height * 0.26, height * 0.56);
+      f.driftX = random(-0.28, 0.28);
+      f.driftY = random(-0.22, 0.22);
       f.phase = random(TWO_PI);
       f.fade = random(0.8, 1.5);
       placed++;
@@ -483,10 +461,10 @@ function updateFireflyMotion(f) {
     return;
   }
 
-  const minY = height * 0.2;
+  const minY = height * 0.18;
   const maxY = height * 0.62;
-  f.x += f.driftX + random(-0.4, 0.4);
-  f.y += f.driftY + random(-0.4, 0.4);
+  f.x += f.driftX + random(-0.35, 0.35);
+  f.y += f.driftY + random(-0.3, 0.3);
 
   if (f.x < f.radius || f.x > width - f.radius) {
     f.driftX *= -1;
@@ -501,14 +479,14 @@ function updateFireflyMotion(f) {
   let closestDistance = Infinity;
   const mouseOverJar = document.elementFromPoint(mouseX, mouseY)?.closest('.player-jar');
   const mouseDistance = isDraggingJar || mouseOverJar ? Infinity : dist(mouseX, mouseY, f.x, f.y);
-  if (mouseDistance < f.radius + 22) {
+  if (mouseDistance < f.radius + 42) {
     catcherX = mouseX;
     closestDistance = mouseDistance;
   }
 
   for (const point of posePoints) {
     const poseDistance = dist(point.x, point.y, f.x, f.y);
-    if (poseDistance < f.radius + 30 && poseDistance < closestDistance) {
+    if (poseDistance < f.radius + 52 && poseDistance < closestDistance) {
       catcherX = point.x;
       closestDistance = poseDistance;
     }

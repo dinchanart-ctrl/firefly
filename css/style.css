@@ -100,10 +100,10 @@ canvas {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    width: 60px;
-    height: 90px;
+    width: 57px;
+    height: 85.5px;
     padding: 9px 5px;
-    border: 2px solid rgba(200, 240, 255, 0.7);
+    border: 2px solid rgba(48, 52, 58, 0.9);
     border-radius: 9px 9px 12px 12px;
     background: rgba(12, 20, 30, 0.4);
     box-shadow: inset 0 0 12px rgba(144, 214, 255, 0.18), 0 0 16px rgba(120, 230, 180, 0.15);
@@ -115,39 +115,6 @@ canvas {
     cursor: grab;
     touch-action: none;
     user-select: none;
-}
-
-.jar-resize {
-    position: absolute;
-    top: -14px;
-    z-index: 4;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    background: rgba(9, 16, 24, 0.9);
-    color: #fff;
-    font: 24px/28px Arial, sans-serif;
-    cursor: pointer;
-    touch-action: manipulation;
-}
-
-.jar-resize-increase {
-    left: -14px;
-}
-
-.jar-resize-decrease {
-    right: -14px;
-}
-
-.jar-resize:hover {
-    background: rgba(45, 65, 82, 0.95);
-}
-
-.jar-resize:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 2px;
 }
 
 .player-jar:active {
